@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Index</title>
+	<style type="text/css" media="screen">
+		html, body, input {
+			font-weight:bold;
+			font-family:Helvetica, Arial, sans-serif;
+		}
+
+		.container {
+			position:relative;
+		}
+
+		.tooltip-button {
+			position:absolute;
+			top:2px;
+			left:166px;
+			padding:5px;
+			font-size:10px;
+			width:10px;
+			height:10px;
+			line-height:10px;
+			text-align:center;
+			background-color:#333;
+			color:#fff;
+
+			-webkit-border-radius:20px;
+			   -moz-border-radius:20px;
+			    -ms-border-radius:20px;
+			     -o-border-radius:20px;
+			        border-radius:20px;
+		}
+
+		.tooltip-content {
+			position:absolute;
+			margin-left:34px;
+			opacity:0;
+			-webkit-transition:opacity 400ms ease-out;
+			padding:10px;
+			background-color:#333;
+			color:#fff;
+			z-index:1;
+			font-size:13px;
+
+			-webkit-border-radius:2px;
+			   -moz-border-radius:2px;
+			    -ms-border-radius:2px;
+			     -o-border-radius:2px;
+			        border-radius:2px;
+		}
+		.tooltip-content.shown {
+			opacity:1;
+		}
+
+		input {
+			font-size:14px;
+			width:150px;
+			padding:3px 5px;
+			border:1px solid #999;
+			display:block;
+
+			-webkit-box-sizing:content-box;
+			   -moz-box-sizing:content-box;
+			        box-sizing:content-box;
+
+			-webkit-border-radius:2px;
+			   -moz-border-radius:2px;
+			    -ms-border-radius:2px;
+			     -o-border-radius:2px;
+			        border-radius:2px;
+
+			-webkit-appearance:none;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<input type="text" id="inputter" />
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" type="text/javascript" charset="utf-8"></script>
+<script src="../tooltip.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+	new Tooltip('inputter', {
+		tooltipContent: 'This is a fantastical, magic tooltip that is totes customizeable',
+		autoInject: true
+	});
+</script>
+</body>
+</html>
