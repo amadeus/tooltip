@@ -12,6 +12,8 @@
 		.container {
 			position:relative;
 			margin-bottom:20px;
+			overflow:hidden;
+			padding:10px;
 
 			-webkit-transform:translate3d(0,0,0);
 			   -moz-transform:translate3d(0,0,0);
@@ -20,19 +22,23 @@
 			        transform:translate3d(0,0,0);
 		}
 
+		.title {
+			margin-bottom:20px;
+		}
+
 		.tooltip-button {
-			position:absolute;
-			top:22px;
-			left:166px;
-			padding:5px;
-			font-size:10px;
-			width:10px;
-			height:10px;
-			line-height:10px;
+			position:relative;
+			float:left;
+			padding:5px 10px;
+			font-size:12px;
+			height:16px;
+			line-height:16px;
 			text-align:center;
+			width:80px;
 			background-color:#333;
 			color:#fff;
 			cursor:pointer;
+			margin-right:20px;
 
 			-webkit-transform:translate3d(0,0,0);
 			   -moz-transform:translate3d(0,0,0);
@@ -49,7 +55,8 @@
 
 		.tooltip-content {
 			position:absolute;
-			margin-left:34px;
+			margin-left:120px;
+			margin-top:3px;
 			opacity:0;
 			-webkit-transition:opacity 200ms ease-out;
 			padding:10px;
@@ -57,6 +64,7 @@
 			color:#fff;
 			z-index:1;
 			font-size:13px;
+			line-height:16px;
 
 			-webkit-transform:translate3d(0,0,0);
 			   -moz-transform:translate3d(0,0,0);
@@ -104,13 +112,9 @@
 <body>
 
 <div class="container click">
-	<label for="input-click">Click Tooltip</label>
-	<input type="text" id="input-click" />
-</div>
-
-<div class="container hover">
-	<label for="input-hover">Hover Tooltip</label>
-	<input type="text" id="input-hover" />
+	<div class="title">Click and Hover Tooltips</div>
+	<div class="tooltip-button" id="button-click">Click Me</div>
+	<div class="tooltip-button" id="button-hover">Hover Me</div>
 </div>
 
 <div class="container focus">
@@ -121,24 +125,26 @@
 <script src="http://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" type="text/javascript" charset="utf-8"></script>
 <script src="../tooltip.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-	new Tooltip('input-click', {
-		tooltipContent: 'This is a tooltip that requires a click to display'
+	new Tooltip('button-click', {
+		content : 'This is a tooltip that requires a click to display'
 	});
 
-	new Tooltip('input-hover', {
-		tooltipContent: 'This is a tooltip that only requires a hover to display',
+	new Tooltip('button-hover', {
+		content    : 'This is a tooltip that only requires a hover to display',
 		activation : 'hover'
 	});
 
+	// Due to different positioning, we create a new template with a
+	// modifier class that the CSS uses to re-position this tooltip
 	Tooltip.addTemplate('tooltip-focus', [
 		'<div class="tooltip-content focus">',
-			'{tooltipContent}',
+			'{content}',
 		'</div>'
 	]);
 
 	new Tooltip('input-focus', {
-		tooltipContent: 'This is a tooltip that only requires you to focus the input to display',
-		tooltipTemplate: 'tooltip-focus',
+		content    : 'This is a tooltip that only requires you to focus the input to display',
+		template   : 'tooltip-focus',
 		activation : 'focus'
 	});
 </script>
