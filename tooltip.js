@@ -56,7 +56,10 @@ Tooltip = new Class({
 		styles: {
 			position : 'absolute',
 			zIndex   : 1
-		}
+		},
+
+		// Origin of the tooltip
+		origin : 'top-left'
 	},
 
 	shown: false,
@@ -204,17 +207,30 @@ Tooltip = new Class({
 
 	// Shows the Tooltip unless its already show
 	show: function(){
-		var coords;
+		var origin = this.options.origin.split('-'),
+			coords, top, left;
 		if (this.shown) {
 			return this;
 		}
 		this.shown = true;
 
-		coords = this.trigger.getPosition(document.body);
+		coords = this.trigger.getCoordinates(document.body);
+		// Determine position based on origin
+		if (origin[0] === 'bottom') {
+			top = coords.top + coords.height;
+		} else {
+			top = coords.top;
+		}
+		if (origin[1] === 'right') {
+			left = coords.left + coords.width;
+		} else {
+			left = coords.left;
+		}
+
 		this.tooltip
 			.setStyles({
-				top  : coords.y,
-				left : coords.x
+				top  : top,
+				left : left
 			})
 			.inject(document.body);
 
