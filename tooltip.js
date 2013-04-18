@@ -44,6 +44,7 @@ Tooltip = new Class({
 
 		activation : 'click',
 		injectTo   : 'after',
+		eventDelay : 200,
 		autoInject : false,
 		shownClass : 'shown'
 	},
@@ -58,7 +59,10 @@ Tooltip = new Class({
 
 		this.setOptions(options);
 
-		this._handleClick = this._handleClick.bind(this);
+		this._handleToggle = this._handleToggle.bind(this);
+		this._handleShow   = this._handleShow.bind(this);
+		this._handleHide   = this._handleHide.bind(this);
+		this._delayHide    = this._delayHide.bind(this);
 
 		this.generateElements();
 		this.inject();
@@ -97,24 +101,58 @@ Tooltip = new Class({
 	attach: function(){
 		var opts = this.options;
 		if (opts.activation === 'click') {
-			this.trigger.addEvent('click', this._handleClick);
-			this.tooltip.addEvent('click', this._handleClick);
+			this.trigger.addEvent('click', this._handleToggle);
+			this.tooltip.addEvent('click', this._handleToggle);
 		}
 		if (opts.activation === 'hover') {
-			this.trigger.addEvent('mouseenter', this._handleClick);
-			this.trigger.addEvent('mouseleave', this._handleClick);
+			this.trigger.addEvent('mouseenter', this._handleShow);
+			this.trigger.addEvent('mouseleave', this._delayHide);
 		}
 		if (opts.activation === 'focus') {
-			this.trigger.addEvent('focus', this._handleClick);
-			this.trigger.addEvent('blur',  this._handleClick);
+			this.trigger.addEvent('focus', this._handleShow);
+			this.trigger.addEvent('blur',  this._handleHide);
 		}
+
+		return this;
 	},
 
-	detach: function(){},
+	detach: function(){
+		var opts = this.options;
+		if (opts.activation === 'click') {
+			this.trigger.removeEvent('click', this._handleToggle);
+			this.tooltip.removeEvent('click', this._handleToggle);
+		}
+		if (opts.activation === 'hover') {
+			this.trigger.removeEvent('mouseenter', this._handleShow);
+			this.trigger.removeEvent('mouseleave', this._delayHide);
+		}
+		if (opts.activation === 'focus') {
+			this.trigger.removeEvent('focus', this._handleShow);
+			this.trigger.removeEvent('blur',  this._handleHide);
+		}
 
-	_handleClick: function(e){
+		return this;
+	},
+
+	_handleToggle: function(e){
 		e.preventDefault();
 		this.toggle();
+	},
+
+	_handleShow: function(e){
+		e.preventDefault();
+		clearTimeout(this.timer);
+		this.show();
+	},
+
+	_handleHide: function(e){
+		e.preventDefault();
+		this.hide();
+	},
+
+	_delayHide: function(){
+		clearTimeout(this.timer);
+		this.timer = this.hide.delay(this.options.eventDelay, this);
 	},
 
 	toggle: function(){
