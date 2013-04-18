@@ -36,16 +36,27 @@ Tooltip = new Class({
 	Implements: [Options, Events],
 
 	options: {
+		// Content use for the button, I may deprecate the button completely
 		buttonContent  : '?',
+
+		// Actual content for the Tooltip
 		tooltipContent : 'Tooltip Content',
 
+		// Specified template from Tooltip.Templates
+		// New templates must be added via Tooltip.addTemplate prior to class instantiation
+		// The 2 listed here are default templates
 		buttonTemplate  : 'button',
 		tooltipTemplate : 'tooltip',
 
+		// Activation type, possible options are [hover, click, focus]
 		activation : 'click',
+		// Injection parameters for the trigger element
 		injectTo   : 'after',
+		// Hide delay from mouseleave
 		eventDelay : 200,
-		autoInject : false,
+		// Determines whether to autoinject on Tooltip instantiation
+		autoInject : true,
+		// Class to add after tooltip is show - allows for CSS animations
 		shownClass : 'shown'
 	},
 
@@ -59,23 +70,27 @@ Tooltip = new Class({
 
 		this.setOptions(options);
 
+		// I prebind all event handlers - these are all technically
+		// a private API, thus the underscore
 		this._handleToggle = this._handleToggle.bind(this);
 		this._handleShow   = this._handleShow.bind(this);
 		this._handleHide   = this._handleHide.bind(this);
 		this._delayHide    = this._delayHide.bind(this);
 
 		this.generateElements();
-		this.inject();
+
+		if (this.options.autoInject)
+			this.inject();
 	},
 
 	generateElements: function(){
 		var opts = this.options;
 
-		// Remove existing elements first
+		// This allows for generateElements to be called safely multiple times
+		// Probably unnecessary, but what the heck!
 		if (this.trigger && opts.activation !== 'focus') {
 			this.trigger.destroy();
 		}
-
 		if (this.tooltip) {
 			this.tooltip.destroy();
 		}
@@ -100,6 +115,7 @@ Tooltip = new Class({
 		return this;
 	},
 
+	// Add eventListeners based on activation type
 	attach: function(){
 		var opts = this.options;
 		if (opts.activation === 'click') {
@@ -118,6 +134,7 @@ Tooltip = new Class({
 		return this;
 	},
 
+	// Remove eventListeners based on activation type
 	detach: function(){
 		var opts = this.options;
 		if (opts.activation === 'click') {
@@ -136,36 +153,43 @@ Tooltip = new Class({
 		return this;
 	},
 
+	// A simple toggle handler for click activation type
 	_handleToggle: function(e){
 		e.preventDefault();
 		this.toggle();
 	},
 
+	// A simple handler to force show, used by mouseenter and focus
 	_handleShow: function(e){
 		e.preventDefault();
 		clearTimeout(this.timer);
 		this.show();
 	},
 
+	// A simple handler used by blur
 	_handleHide: function(e){
 		e.preventDefault();
 		this.hide();
 	},
 
+	// A simple handler to delay hide from mouseleave
 	_delayHide: function(){
 		clearTimeout(this.timer);
 		this.timer = this.hide.delay(this.options.eventDelay, this);
 	},
 
+	// The `public` API for toggling visibility of the Tooltip
 	toggle: function(){
 		if (this.shown) {
 			this.hide();
 		} else {
 			this.show();
 		}
+
 		return this;
 	},
 
+	// Hides the Tooltip, unless it is already hidden
 	hide: function(){
 		if (!this.shown) {
 			return this;
@@ -176,9 +200,11 @@ Tooltip = new Class({
 		this.tooltip
 			.removeClass(this.options.shownClass)
 			.dispose();
+
 		return this;
 	},
 
+	// Shows the Tooltip unless its already show
 	show: function(){
 		var coords;
 		if (this.shown) {
@@ -197,9 +223,11 @@ Tooltip = new Class({
 		this.timer = (function(){
 			this.tooltip.addClass(this.options.shownClass);
 		}).delay(1, this);
+
 		return this;
 	},
 
+	// Injects the Tooltip based on the element passed in
 	inject: function(){
 		if (this.injected) {
 			return this;
@@ -210,9 +238,11 @@ Tooltip = new Class({
 		if (this.options.activation !== 'focus') {
 			this.trigger.inject(this.element, this.options.injectTo);
 		}
+
 		return this;
 	},
 
+	// Removes the Tooltip, but keeps a reference to the elements for re-injection
 	dispose: function(){
 		if (!this.injected) {
 			return this;

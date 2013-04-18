@@ -122,14 +122,12 @@
 <script src="../tooltip.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 	new Tooltip('input-click', {
-		tooltipContent: 'This is a tooltip that requires a click to display',
-		autoInject: true
+		tooltipContent: 'This is a tooltip that requires a click to display'
 	});
 
 	new Tooltip('input-hover', {
 		tooltipContent: 'This is a tooltip that only requires a hover to display',
-		activation : 'hover',
-		autoInject: true
+		activation : 'hover'
 	});
 
 	Tooltip.addTemplate('tooltip-focus', [
@@ -141,8 +139,7 @@
 	new Tooltip('input-focus', {
 		tooltipContent: 'This is a tooltip that only requires you to focus the input to display',
 		tooltipTemplate: 'tooltip-focus',
-		activation : 'focus',
-		autoInject: true
+		activation : 'focus'
 	});
 </script>
 </body>
