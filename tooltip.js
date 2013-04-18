@@ -50,7 +50,13 @@ Tooltip = new Class({
 		autoAttach : true,
 
 		// Class to add after tooltip is show - allows for CSS animations
-		shownClass : 'shown'
+		shownClass : 'shown',
+
+		// Additional styles to add to the tooltip
+		styles: {
+			position : 'absolute',
+			zIndex   : 1
+		}
 	},
 
 	shown: false,
@@ -89,8 +95,10 @@ Tooltip = new Class({
 		// so they can be more customizeable. Therefore I have to substitute vars
 		// and allow the browser to do its magical string parsing to do its thang
 		this.tooltip = new Element('div', {
-			html: getTemplate(opts.template).substitute(opts)
-		}).getFirst();
+				html: getTemplate(opts.template).substitute(opts)
+			})
+			.getFirst()
+			.setStyles(opts.styles);
 
 		return this;
 	},
