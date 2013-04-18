@@ -87,12 +87,14 @@ Tooltip = new Class({
 			html: getTemplate(opts.tooltipTemplate).substitute(opts)
 		}).getFirst();
 
-		if (opts.activation === 'click' || opts.activation === 'hover') {
+		// If focus is the activation type, we use the element as the trigger,
+		// otherewise we create a trigger button
+		if (opts.activation === 'focus') {
+			this.trigger = this.element;
+		} else {
 			this.trigger = new Element('div', {
 				html: getTemplate(opts.buttonTemplate).substitute(opts)
 			}).getFirst();
-		} else {
-			this.trigger = this.element;
 		}
 
 		return this;
