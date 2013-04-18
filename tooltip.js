@@ -68,8 +68,8 @@ Tooltip = new Class({
 		var opts = this.options;
 
 		// Remove existing elements first
-		if (this.button) {
-			this.button.destroy();
+		if (this.trigger && opts.activation !== 'focus') {
+			this.trigger.destroy();
 		}
 
 		if (this.tooltip) {
@@ -83,25 +83,30 @@ Tooltip = new Class({
 			html: getTemplate(opts.tooltipTemplate).substitute(opts)
 		}).getFirst();
 
-		this.button = new Element('div', {
-			html: getTemplate(opts.buttonTemplate).substitute(opts)
-		}).getFirst();
+		if (opts.activation === 'click' || opts.activation === 'hover') {
+			this.trigger = new Element('div', {
+				html: getTemplate(opts.buttonTemplate).substitute(opts)
+			}).getFirst();
+		} else {
+			this.trigger = this.element;
+		}
 
 		return this;
 	},
 
 	attach: function(){
-		if (this.options.activation === 'click') {
-			this.button.addEvent('click', this._handleClick);
+		var opts = this.options;
+		if (opts.activation === 'click') {
+			this.trigger.addEvent('click', this._handleClick);
 			this.tooltip.addEvent('click', this._handleClick);
 		}
-		if (this.options.activation === 'hover') {
-			this.button.addEvent('mouseenter', this._handleClick);
-			this.button.addEvent('mouseleave', this._handleClick);
+		if (opts.activation === 'hover') {
+			this.trigger.addEvent('mouseenter', this._handleClick);
+			this.trigger.addEvent('mouseleave', this._handleClick);
 		}
-		if (this.options.activation === 'focus') {
-			this.element.addEvent('focus', this._handleClick);
-			this.element.addEvent('blur', this._handleClick);
+		if (opts.activation === 'focus') {
+			this.trigger.addEvent('focus', this._handleClick);
+			this.trigger.addEvent('blur',  this._handleClick);
 		}
 	},
 
@@ -141,7 +146,7 @@ Tooltip = new Class({
 		}
 
 		this.shown = true;
-		coords = this.button.getPosition(document.body);
+		coords = this.trigger.getPosition(document.body);
 		this.tooltip
 			.setStyles({
 				top  : coords.y,
@@ -162,7 +167,9 @@ Tooltip = new Class({
 
 		this.injected = true;
 		this.attach();
-		this.button.inject(this.element, this.options.injectTo);
+		if (this.options.activation !== 'focus') {
+			this.trigger.inject(this.element, this.options.injectTo);
+		}
 		return this;
 	},
 
@@ -173,7 +180,9 @@ Tooltip = new Class({
 
 		this.injected = false;
 		this.detach();
-		this.button.dispose();
+		if (this.options.activation !== 'focus') {
+			this.trigger.dispose();
+		}
 		this.tooltip.dispose();
 
 		return this;
