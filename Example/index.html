@@ -11,11 +11,18 @@
 
 		.container {
 			position:relative;
+			margin-bottom:20px;
+
+			-webkit-transform:translate3d(0,0,0);
+			   -moz-transform:translate3d(0,0,0);
+			    -ms-transform:translate3d(0,0,0);
+			     -o-transform:translate3d(0,0,0);
+			        transform:translate3d(0,0,0);
 		}
 
 		.tooltip-button {
 			position:absolute;
-			top:2px;
+			top:22px;
 			left:166px;
 			padding:5px;
 			font-size:10px;
@@ -25,6 +32,13 @@
 			text-align:center;
 			background-color:#333;
 			color:#fff;
+			cursor:pointer;
+
+			-webkit-transform:translate3d(0,0,0);
+			   -moz-transform:translate3d(0,0,0);
+			    -ms-transform:translate3d(0,0,0);
+			     -o-transform:translate3d(0,0,0);
+			        transform:translate3d(0,0,0);
 
 			-webkit-border-radius:20px;
 			   -moz-border-radius:20px;
@@ -37,12 +51,18 @@
 			position:absolute;
 			margin-left:34px;
 			opacity:0;
-			-webkit-transition:opacity 400ms ease-out;
+			-webkit-transition:opacity 200ms ease-out;
 			padding:10px;
 			background-color:#333;
 			color:#fff;
 			z-index:1;
 			font-size:13px;
+
+			-webkit-transform:translate3d(0,0,0);
+			   -moz-transform:translate3d(0,0,0);
+			    -ms-transform:translate3d(0,0,0);
+			     -o-transform:translate3d(0,0,0);
+			        transform:translate3d(0,0,0);
 
 			-webkit-border-radius:2px;
 			   -moz-border-radius:2px;
@@ -50,8 +70,14 @@
 			     -o-border-radius:2px;
 			        border-radius:2px;
 		}
+
 		.tooltip-content.shown {
 			opacity:1;
+		}
+
+		.tooltip-content.focus {
+			margin-left:180px;
+			margin-top:1px;
 		}
 
 		input {
@@ -76,15 +102,46 @@
 	</style>
 </head>
 <body>
-<div class="container">
-	<input type="text" id="inputter" />
+
+<div class="container click">
+	<label for="input-click">Click Tooltip</label>
+	<input type="text" id="input-click" />
+</div>
+
+<div class="container hover">
+	<label for="input-hover">Hover Tooltip</label>
+	<input type="text" id="input-hover" />
+</div>
+
+<div class="container focus">
+	<label for="input-focus">Focus Tooltip</label>
+	<input type="text" id="input-focus" />
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js" type="text/javascript" charset="utf-8"></script>
 <script src="../tooltip.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-	new Tooltip('inputter', {
-		tooltipContent: 'This is a fantastical, magic tooltip that is totes customizeable',
+	new Tooltip('input-click', {
+		tooltipContent: 'This is a tooltip that requires a click to display',
+		autoInject: true
+	});
+
+	new Tooltip('input-hover', {
+		tooltipContent: 'This is a tooltip that only requires a hover to display',
+		activation : 'hover',
+		autoInject: true
+	});
+
+	Tooltip.addTemplate('tooltip-focus', [
+		'<div class="tooltip-content focus">',
+			'{tooltipContent}',
+		'</div>'
+	]);
+
+	new Tooltip('input-focus', {
+		tooltipContent: 'This is a tooltip that only requires you to focus the input to display',
+		tooltipTemplate: 'tooltip-focus',
+		activation : 'focus',
 		autoInject: true
 	});
 </script>
