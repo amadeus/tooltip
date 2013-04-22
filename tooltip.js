@@ -1,7 +1,7 @@
 (function(global){ 'use strict';
 
 var Templates = {},
-	Tooltip, addTemplate, getTemplate;
+	Groups, Tooltip, addTemplate, getTemplate;
 
 // Method to easily add a new template.
 addTemplate = function addTemplate(name, template){
@@ -40,9 +40,6 @@ Tooltip = new Class({
 		// Activation type, possible options are [hover, click, focus, null]
 		activation : 'click',
 
-		// Injection parameters for the trigger element
-		injectTo   : 'after',
-
 		// Hide delay from mouseleave
 		eventDelay : 200,
 
@@ -59,7 +56,11 @@ Tooltip = new Class({
 		},
 
 		// Origin of the tooltip
-		origin : 'top-left'
+		origin : 'top-right',
+
+		// If attached to a group, only 1 can show at a time,
+		// thus it will force all others of the same group to be hidden
+		group: null
 	},
 
 	shown: false,
@@ -127,6 +128,10 @@ Tooltip = new Class({
 			this.trigger.addEvent('blur',  this._handleHide);
 		}
 
+		if (this.options.group) {
+			Groups.addToGroup(this.options.group, this);
+		}
+
 		return this;
 	},
 
@@ -149,6 +154,10 @@ Tooltip = new Class({
 		if (opts.activation === 'focus') {
 			this.trigger.removeEvent('focus', this._handleShow);
 			this.trigger.removeEvent('blur',  this._handleHide);
+		}
+
+		if (this.options.group) {
+			Groups.removeFromGroup(this.options.group, this);
 		}
 
 		return this;
@@ -209,10 +218,15 @@ Tooltip = new Class({
 	show: function(){
 		var origin = this.options.origin.split('-'),
 			coords, top, left;
+
 		if (this.shown) {
 			return this;
 		}
 		this.shown = true;
+
+		if (this.options.group) {
+			Groups.hideGroup(this.options.group, this);
+		}
 
 		coords = this.trigger.getCoordinates(document.body);
 		// Determine position based on origin
@@ -252,6 +266,43 @@ Tooltip = new Class({
 	}
 
 });
+
+Groups = {
+	addToGroup: function(group, instance){
+		if (!this[group]) {
+			this[group] = [];
+		}
+		this[group].push(instance);
+	},
+
+	removeFromGroup: function(group, instance){
+		var index;
+		if (!this[group]) {
+			return;
+		}
+		index = this[group].indexOf(instance);
+		if (index < 0) {
+			return;
+		}
+		this[group].splice(index, 1);
+	},
+
+	hideGroup: function(group, exception){
+		var g, gLen;
+		group = this[group];
+		if (!group) {
+			return;
+		}
+
+		for (g = 0, gLen = group.length; g < gLen; g++) {
+			if (group[g] === exception) {
+				continue;
+			}
+			group[g].hide();
+		}
+	}
+};
+
 
 Tooltip.extend({
 	addTemplate : addTemplate,
