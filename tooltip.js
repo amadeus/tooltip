@@ -80,6 +80,10 @@ Tooltip = new Class({
 		this._handleHide   = this._handleHide.bind(this);
 		this._delayHide    = this._delayHide.bind(this);
 
+		// Prebinding setPosition since it will need to be added to
+		// a resize event
+		this.setPosition   = this.setPosition.bind(this)
+
 		this.generateElements();
 
 		if (this.options.autoAttach)
@@ -156,6 +160,8 @@ Tooltip = new Class({
 			this.trigger.removeEvent('blur',  this._handleHide);
 		}
 
+		window.removeEvent('resize', this.setPosition);
+
 		if (this.options.group) {
 			Groups.removeFromGroup(this.options.group, this);
 		}
@@ -207,6 +213,9 @@ Tooltip = new Class({
 		this.shown = false;
 
 		clearTimeout(this._timerHide);
+
+		window.removeEvent('resize', this.setPosition);
+
 		this.tooltip
 			.dispose()
 			.removeClass(this.options.shownClass);
@@ -216,9 +225,6 @@ Tooltip = new Class({
 
 	// Shows the Tooltip unless its already show
 	show: function(){
-		var origin = this.options.origin.split('-'),
-			coords, top, left;
-
 		if (this.shown) {
 			return this;
 		}
@@ -228,31 +234,42 @@ Tooltip = new Class({
 			Groups.hideGroup(this.options.group, this);
 		}
 
-		coords = this.trigger.getCoordinates(document.body);
-		// Determine position based on origin
-		if (origin[0] === 'bottom') {
-			top = coords.top + coords.height;
-		} else {
-			top = coords.top;
-		}
-		if (origin[1] === 'right') {
-			left = coords.left + coords.width;
-		} else {
-			left = coords.left;
-		}
-
-		this.tooltip
-			.setStyles({
-				top  : top,
-				left : left
-			})
-			.inject(document.body);
+		this.setPosition();
+		this.tooltip.inject(document.body);
+		window.addEvent('resize', this.setPosition);
 
 		// Delay the addition of a class to the Tooltip for better CSS Transition support
 		clearTimeout(this._timerShow);
 		this._timerShow = (function(){
 			this.tooltip.addClass(this.options.shownClass);
 		}).delay(1, this);
+
+		return this;
+	},
+
+	setPosition: function(){
+		var origin = this.options.origin.split('-'),
+			coords = this.trigger.getCoordinates(document.body),
+			top, left;
+
+		// Determine top coordinate
+		if (origin[0] === 'bottom') {
+			top = coords.top + coords.height;
+		} else {
+			top = coords.top;
+		}
+
+		// Determine left coordinate
+		if (origin[1] === 'right') {
+			left = coords.left + coords.width;
+		} else {
+			left = coords.left;
+		}
+
+		this.tooltip.setStyles({
+			top  : top,
+			left : left
+		});
 
 		return this;
 	},
